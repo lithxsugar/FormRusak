@@ -320,7 +320,7 @@
             background: transparent;
         }
 
-        .section-start > td {
+        .section-start>td {
             border-top: 3px solid #666;
         }
 
@@ -2123,10 +2123,10 @@
 
                 const headerFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
                 const bandFills = { tr: 'D4EDDA', sr: 'E8F5E9', r: 'E3F2FD', s: 'FFFDE7', b: 'FFF3E0', sb: 'FCE4EC', na: 'F5F5F5' };
-                const head1 = ["NO", "SISTEM", "KOMPONEN", "SATUAN", "VOLUME SELURUH KOMPONEN", "TAHAP 2 - HITUNG VOLUME KERUSAKAN", null, null, null, null, null, null, "KETERANGAN"];
+                const head1 = ["NO", "SISTEM", "KOMPONEN", "SATUAN", "VOLUME SELURUH KOMPONEN", "TAHAP 2 - HITUNG VOLUME KERUSAKAN", null, null, null, null, null, null, null, "KETERANGAN"];
                 ws.getRow(r).values = head1; ws.getRow(r).height = 24;
                 ws.getRow(r).eachCell(cell => { cell.font = { name: 'Arial', size: 9, bold: true }; cell.alignment = center; cell.border = allBorder; cell.fill = headerFill; });
-                ws.mergeCells(r, 6, r, 13);[1, 2, 3, 4, 5, 13].forEach(c => ws.mergeCells(r, c, r + 1, c)); r++;
+                ws.mergeCells(r, 6, r, 13);[1, 2, 3, 4, 5, 14].forEach(c => ws.mergeCells(r, c, r + 1, c)); r++;
                 const subHeads = ["Tidak Rusak", "Sangat Ringan", "Ringan", "Sedang", "Berat", "Sangat Berat", "Komponen Tdk Sesuai/Ada"];
                 const bandKeys = ['tr', 'sr', 'r', 's', 'b', 'sb', 'na'];
                 subHeads.forEach((val, i) => { const cell = ws.getCell(r, 6 + i); cell.value = val; cell.font = { name: 'Arial', size: 9, bold: true }; cell.alignment = center; cell.border = allBorder; cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bandFills[bandKeys[i]] } }; });
@@ -2139,27 +2139,28 @@
                     ws.getCell(r, 4).value = (tds[colOffset + 1]?.innerText || '').trim();
                     const volVal = tds[colOffset + 2]?.querySelector('input')?.value || tds[colOffset + 2]?.innerText;
                     ws.getCell(r, 5).value = (volVal === '' || volVal === '-') ? null : Number(volVal);
-                    const specialInput = tr.querySelector('td[colspan="7"] select');
+
+                    const specialInput = tr.querySelector('td[colspan="8"] select');
                     if (specialInput) {
                         ws.mergeCells(r, 6, r, 13);
                         const selectedText = specialInput.options[specialInput.selectedIndex]?.text || '';
                         ws.getCell(r, 6).value = selectedText.startsWith('---') ? '(Belum dipilih)' : selectedText;
                     } else {
                         tr.querySelectorAll('.damage-cell').forEach((td, j) => { const v = td.querySelector('input')?.value; ws.getCell(r, 6 + j).value = v === '' ? null : Number(v); ws.getCell(r, 6 + j).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bandFills[bandKeys[j]] } }; });
-                        const ket = tr.querySelector('.keterangan-text')?.innerText || ''; const kc = ws.getCell(r, 13); kc.value = ket;
+                        const ket = tr.querySelector('.keterangan-text')?.innerText || ''; const kc = ws.getCell(r, 14); kc.value = ket;
                         if (/OK/i.test(ket)) kc.font = { color: { argb: 'FF008000' }, bold: true }; else if (/Kurang/i.test(ket)) kc.font = { color: { argb: 'FFFFA500' }, bold: true }; else if (/Lebih/i.test(ket)) kc.font = { color: { argb: 'FFFF0000' }, bold: true };
                     }
-                    ws.getRow(r).eachCell({ includeEmpty: true }, (cell, col) => { cell.border = allBorder; if ([1, 2, 4, 5, 13].includes(col) || (col >= 6 && !specialInput)) cell.alignment = center; if (col === 3 || (col === 6 && specialInput)) cell.alignment = left; });
+                    ws.getRow(r).eachCell({ includeEmpty: true }, (cell, col) => { cell.border = allBorder; if ([1, 2, 4, 5, 14].includes(col) || (col >= 6 && !specialInput)) cell.alignment = center; if (col === 3 || (col === 6 && specialInput)) cell.alignment = left; });
                     r++;
                 });
                 r += 2;
                 const sketchTop = r;
                 ws.mergeCells(r, 1, r, 8); ws.getCell(r, 1).value = "SKETSA DENAH BANGUNAN";
-                ws.mergeCells(r, 9, r, 13); ws.getCell(r, 9).value = "Tingkat Kerusakan";
+                ws.mergeCells(r, 9, r, 14); ws.getCell(r, 9).value = "Tingkat Kerusakan";
                 ws.getRow(r).eachCell(c => { c.font = { bold: true, size: 11 }; c.alignment = center; c.border = allBorder; }); r++;
                 ws.mergeCells(r, 1, r + 9, 8);
-                ["Ringan: < 30%", "Sedang: > 30% - 45%", "Berat: > 45%"].forEach((text, i) => { ws.mergeCells(r + 1 + i, 9, r + 1 + i, 12); ws.getCell(r + 1 + i, 9).value = text; ws.getCell(r + 1 + i, 9).alignment = { ...left, vertical: 'top' }; });
-                for (let rr = r; rr <= r + 9; rr++) { for (let cc = 1; cc <= 13; cc++) { if (!ws.getCell(rr, cc).border) ws.getCell(rr, cc).border = allBorder; } }
+                ["Ringan: < 30%", "Sedang: > 30% - 45%", "Berat: > 45%"].forEach((text, i) => { ws.mergeCells(r + 1 + i, 9, r + 1 + i, 13); ws.getCell(r + 1 + i, 9).value = text; ws.getCell(r + 1 + i, 9).alignment = { ...left, vertical: 'top' }; });
+                for (let rr = r; rr <= r + 9; rr++) { for (let cc = 1; cc <= 14; cc++) { if (!ws.getCell(rr, cc).border) ws.getCell(rr, cc).border = allBorder; } }
                 r += 11;
                 const sigTop = r;
                 const sigBlocks = [{ title: "TIM SURVEI", agency: "Petugas Survei", nameCls: "surveyName", nipCls: "surveyNip", col: 1, pad: formPads.survey }, { title: "MENGETAHUI", agency: activeFormElement.querySelector('.eduAgency')?.value || '', nameCls: "eduName", nipCls: "eduNip", col: 5, pad: formPads.edu }, { title: "MENYETUJUI", agency: activeFormElement.querySelector('.puAgency')?.value || '', nameCls: "puName", nipCls: "puNip", col: 9, pad: formPads.pu }];
@@ -2173,7 +2174,7 @@
                     ws.getCell(r + 7, sb.col).alignment = ws.getCell(r + 6, sb.col).alignment = center;
                 });
                 r += 9;
-                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = "Note: Dinas PU/Dinas yang menangani Bangunan Gedung";
+                ws.mergeCells(r, 1, r, 14); ws.getCell(r, 1).value = "Note: Dinas PU/Dinas yang menangani Bangunan Gedung";
                 ws.getCell(r, 1).font = { italic: true, size: 9, color: { argb: 'FF555555' } }; ws.getCell(r, 1).alignment = left;
 
                 const canvasRanges = [{ pad: formPads.sketch, range: { tl: { col: 1.05, row: sketchTop - 0.95 }, ext: { width: 540, height: 180 } } }, { pad: formPads.survey, range: { tl: { col: 1.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }, { pad: formPads.edu, range: { tl: { col: 5.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }, { pad: formPads.pu, range: { tl: { col: 9.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }];
