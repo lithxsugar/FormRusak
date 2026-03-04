@@ -1,4 +1,4 @@
-const CACHE_NAME = 'penilaian-bangunan-v6';
+const CACHE_NAME = 'penilaian-bangunan-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

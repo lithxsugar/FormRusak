@@ -2307,13 +2307,9 @@
             }
         }
 
-        function showSurveyList(formId, isPopState = false) {
+        function showSurveyList(formId) {
             activeFormCategory = formId; // Save category context
             activeFormId = null;
-
-            if (!isPopState) {
-                history.pushState({ page: 'list', category: formId }, '', '#list-' + formId);
-            }
 
             document.getElementById('landing-page').classList.add('hidden');
             if (activeFormElement) activeFormElement.style.display = 'none';
@@ -2329,26 +2325,26 @@
                 listPage.style.display = 'block';
                 document.getElementById('back-to-selection').style.display = 'block';
 
-                // update back button behavior
-                document.getElementById('back-to-selection').onclick = () => history.back();
+                // update back button behavior to return to landing page
+                document.getElementById('back-to-selection').onclick = () => showLandingPage();
 
                 renderSurveyList(formId);
             }, 500);
         }
 
-        function showForm(formId, isPopState = false) {
+        function showForm(formId) {
             // Hide list
             document.getElementById('survey-list-page').style.display = 'none';
 
             activeFormId = formId;
             activeFormElement = document.getElementById(activeFormId);
 
-            if (!isPopState) {
-                history.pushState({ page: 'form', category: formId }, '', '#form-' + formId);
-            }
-
             activeFormElement.style.display = 'block';
             document.getElementById('back-to-selection').style.display = 'block';
+
+            if (currentEditingSurveyId === null) {
+                clearFormState(activeFormElement);
+            }
 
             // update back button behavior to return to list, not landing
             document.getElementById('back-to-selection').onclick = async () => {
@@ -2359,7 +2355,6 @@
                     btn.innerText = '⏳';
                     btn.disabled = true;
 
-                    window.__skipAutoSave = true;
                     const surveyData = extractFormData(activeFormElement);
                     if (currentEditingSurveyId) {
                         surveyData.id = currentEditingSurveyId;
@@ -2368,12 +2363,11 @@
 
                     btn.innerText = originalStr;
                     btn.disabled = false;
-                    history.back();
-                    setTimeout(() => window.__skipAutoSave = false, 500);
+                    showSurveyList(activeFormId);
                 } catch (e) {
                     console.error("Auto-save failed", e);
                     if (confirm("Gagal auto-save. Tetap kembali?")) {
-                        history.back();
+                        showSurveyList(activeFormId);
                     }
                     document.getElementById('back-to-selection').disabled = false;
                     document.getElementById('back-to-selection').innerText = '↩';
@@ -2409,11 +2403,7 @@
             showForm(activeFormCategory);
         });
 
-        function showLandingPage(isPopState = false) {
-            if (!isPopState) {
-                history.pushState({ page: 'landing' }, '', '#landing');
-            }
-
+        function showLandingPage() {
             if (activeFormElement) {
                 activeFormElement.style.display = 'none';
             }
@@ -2432,35 +2422,6 @@
             activeFormCategory = null;
             formPads = {};
         }
-
-        // --- BROWSER HISTORY ROUTING ---
-        if (!history.state) {
-            history.replaceState({ page: 'landing' }, '', '#landing');
-        }
-
-        window.addEventListener('popstate', async (event) => {
-            const state = event.state;
-
-            // If in form, auto-save before leaving
-            if (activeFormElement && activeFormElement.style.display === 'block' && !window.__skipAutoSave) {
-                try {
-                    const surveyData = extractFormData(activeFormElement);
-                    if (currentEditingSurveyId) {
-                        surveyData.id = currentEditingSurveyId;
-                    }
-                    await saveSurveyToDB(surveyData);
-                } catch (e) { console.error("Silent auto-save failed", e); }
-            }
-
-            if (!state || state.page === 'landing') {
-                showLandingPage(true);
-            } else if (state.page === 'list') {
-                showSurveyList(state.category, true);
-            } else if (state.page === 'form') {
-                // To safely re-enter form from forward navigation
-                showForm(state.category, true);
-            }
-        });
 
         // --- CORE FORM LOGIC (Context-aware) ---
         function initializeForm(formElement) {
@@ -2689,7 +2650,14 @@
                 else if (el.classList.contains('puAgency')) el.value = 'Dinas PU Kab/Kota/Provinsi';
                 else if (el.classList.contains('jumlahLantai')) return;
                 else if (el.type === 'file') el.value = '';
-                else el.value = '';
+                else {
+                    // For volume cells that have default HTML values (e.g. 10), restore them
+                    if (el.hasAttribute('value') && el.type === 'number' && el.closest('.volume-cell')) {
+                        el.value = el.getAttribute('value');
+                    } else {
+                        el.value = '';
+                    }
+                }
             });
             formElement.querySelectorAll('.keterangan-text').forEach(span => { span.innerText = ''; });
             formElement.querySelectorAll('.thumbnail-container').forEach(div => { div.innerHTML = ''; });
