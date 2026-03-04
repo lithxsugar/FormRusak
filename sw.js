@@ -1,4 +1,4 @@
-const CACHE_NAME = 'penilaian-bangunan-v7';
+const CACHE_NAME = 'penilaian-bangunan-v8';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -12,7 +12,7 @@ const ASSETS_TO_CACHE = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css'
 ];
 
-// Install event - cache all critical assets
+// Install event - cache all critical assets and immediately activate
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -20,17 +20,11 @@ self.addEventListener('install', (event) => {
         console.log('[SW] Caching app shell and assets');
         return cache.addAll(ASSETS_TO_CACHE);
       })
+      .then(() => self.skipWaiting()) // Activate immediately so old clients get updated
       .catch((err) => {
         console.error('[SW] Cache install failed:', err);
       })
   );
-});
-
-// Listen for messages from the client
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });
 
 // Activate event - clean up old caches

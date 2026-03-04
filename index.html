@@ -2043,9 +2043,7 @@
 
                 // Show list page again
                 alert('Draft survei berhasil disimpan ke Database Lokal.');
-                window.__skipAutoSave = true;
-                history.back(); // use history navigation to go to list
-                setTimeout(() => window.__skipAutoSave = false, 500);
+                showSurveyList(activeFormId);
             } catch (error) {
                 console.error('Error saving survey:', error);
                 alert('Gagal menyimpan draft: ' + error.message);
@@ -2342,10 +2340,6 @@
             activeFormElement.style.display = 'block';
             document.getElementById('back-to-selection').style.display = 'block';
 
-            if (currentEditingSurveyId === null) {
-                clearFormState(activeFormElement);
-            }
-
             // update back button behavior to return to list, not landing
             document.getElementById('back-to-selection').onclick = async () => {
                 // Auto-save before returning
@@ -2375,6 +2369,11 @@
             };
 
             initializeForm(activeFormElement);
+
+            // Clear AFTER initializeForm so nothing can overwrite the wipe
+            if (currentEditingSurveyId === null) {
+                clearFormState(activeFormElement);
+            }
         }
 
         async function openSurveyForEdit(id, formId) {
@@ -2660,6 +2659,7 @@
                 }
             });
             formElement.querySelectorAll('.keterangan-text').forEach(span => { span.innerText = ''; });
+            formElement.querySelectorAll('.print-only-text').forEach(span => { span.innerText = '(Belum dipilih)'; });
             formElement.querySelectorAll('.thumbnail-container').forEach(div => { div.innerHTML = ''; });
             if (formPads && Object.keys(formPads).length > 0) Object.values(formPads).forEach(pad => { if (pad && pad.clear) pad.clear(); });
             formElement.querySelectorAll('.main-data-tbody tr').forEach(row => updateKeterangan(row));
@@ -3140,19 +3140,13 @@
                     .then((registration) => {
                         console.log('[PWA] Service Worker registered with scope:', registration.scope);
 
-                        // If there is already a waiting worker, show the update banner
-                        if (registration.waiting) {
-                            showUpdateBanner(registration.waiting);
-                        }
-
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
-                                // When the new worker is installed and waiting to activate
-                                // and there is an existing controller, it's an update.
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    showUpdateBanner(newWorker);
+                                if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                    // New version has been activated via skipWaiting
+                                    showUpdateBanner();
                                 }
                             });
                         });
@@ -3161,20 +3155,22 @@
                         console.error('[PWA] Service Worker registration failed:', error);
                     });
 
-                // Reload the page when the service worker takes control (after skipWaiting)
-                let refreshing = false;
+                // Backup: also listen for controller change
+                let notified = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (!refreshing) {
-                        refreshing = true;
-                        window.location.reload();
+                    if (!notified) {
+                        notified = true;
+                        showUpdateBanner();
                     }
                 });
             });
         }
 
         // PWA Update Banner Logic
-        function showUpdateBanner(worker) {
+        function showUpdateBanner() {
             let updateBanner = document.getElementById('pwa-update-banner');
+            if (updateBanner && updateBanner.classList.contains('show')) return; // Already showing
+
             if (!updateBanner) {
                 updateBanner = document.createElement('div');
                 updateBanner.id = 'pwa-update-banner';
@@ -3226,9 +3222,7 @@
                 document.body.appendChild(updateBanner);
 
                 document.getElementById('pwa-update-btn').addEventListener('click', () => {
-                    // Send message to worker to skip waiting
-                    updateBanner.querySelector('.update-btn').innerText = 'Updating...';
-                    worker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
                 });
 
                 document.getElementById('pwa-dismiss-btn').addEventListener('click', () => {
