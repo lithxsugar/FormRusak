@@ -4,7 +4,7 @@
   "description": "Formulir penilaian kerusakan bangunan - Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis",
   "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#E0F7FA",
   "theme_color": "#004D40",
   "lang": "id",

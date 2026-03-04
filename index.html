@@ -2188,7 +2188,17 @@
                 }
 
                 const namaBangunan = activeFormElement.querySelector('.namaBangunan')?.value || 'Bangunan';
-                const filename = `Penilaian_Kerusakan_${namaBangunan}.xlsx`;
+                let filename = `Penilaian_Kerusakan_${namaBangunan}`;
+
+                // Prompt user for filename
+                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", filename);
+                if (customFilename === null) {
+                    return; // User cancelled
+                }
+
+                // Use input or default if empty, then append extension
+                filename = (customFilename.trim() || filename) + '.xlsx';
+
                 const buffer = await wb.xlsx.writeBuffer();
                 saveAs(new Blob([buffer]), filename);
 
@@ -2368,7 +2378,17 @@
             `;
                 const blob = new Blob([htmlString], { type: 'application/msword' });
                 const namaBangunan = activeFormElement.querySelector('.namaBangunan')?.value || 'Bangunan';
-                const filename = `Penilaian_Kerusakan_${namaBangunan}.doc`;
+                let filename = `Penilaian_Kerusakan_${namaBangunan}`;
+
+                // Prompt user for filename
+                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", filename);
+                if (customFilename === null) {
+                    return; // User cancelled
+                }
+
+                // Use input or default if empty, then append extension
+                filename = (customFilename.trim() || filename) + '.doc';
+
                 saveAs(blob, filename);
             } catch (err) { console.error(err); alert('Gagal mengekspor Word: ' + err.message); }
         }
