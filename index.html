@@ -320,8 +320,13 @@
             background: transparent;
         }
 
-        .section-start>td {
+        .section-start > td {
             border-top: 3px solid #666;
+        }
+
+        th.damage-tr,
+        td.damage-tr {
+            background-color: #d4edda;
         }
 
         th.damage-sr,
@@ -816,6 +821,8 @@
                 border: none;
             }
 
+            th.damage-tr,
+            td.damage-tr,
             th.damage-sr,
             td.damage-sr,
             th.damage-r,
@@ -946,10 +953,11 @@
                     <th rowspan="2">KOMPONEN</th>
                     <th rowspan="2">SATUAN</th>
                     <th rowspan="2">VOLUME SELURUH KOMPONEN</th>
-                    <th colspan="6">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th>
+                    <th colspan="7">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th>
                     <th rowspan="2">KETERANGAN</th>
                 </tr>
                 <tr>
+                    <th class="damage-tr">Tidak Rusak</th>
                     <th class="damage-sr">Sangat Ringan</th>
                     <th class="damage-r">Ringan</th>
                     <th class="damage-s">Sedang</th>
@@ -965,7 +973,7 @@
                     <td>Pondasi & Sloof <button class="help-btn" data-indicator="pondasi">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select pondasiSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Pondasi diindikasi dalam kondisi baik">1. Pondasi diindikasi dalam kondisi
@@ -994,6 +1002,7 @@
                     <td>Kolom <button class="help-btn" data-indicator="kolom">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="10" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1006,6 +1015,7 @@
                     <td>Balok <button class="help-btn" data-indicator="balok">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="10" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1018,6 +1028,7 @@
                     <td>Atap <button class="help-btn" data-indicator="atap">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1032,6 +1043,7 @@
                     <td>Dinding / Partisi <button class="help-btn" data-indicator="dinding">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1044,6 +1056,7 @@
                     <td>Plafond <button class="help-btn" data-indicator="plafon">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1056,6 +1069,7 @@
                     <td>Lantai <button class="help-btn" data-indicator="lantai">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1068,6 +1082,7 @@
                     <td>Kusen <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1080,6 +1095,7 @@
                     <td>Pintu <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1092,6 +1108,7 @@
                     <td>Jendela <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1104,6 +1121,7 @@
                     <td>Finishing Plafond <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1116,6 +1134,7 @@
                     <td>Finishing Dinding <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1128,6 +1147,7 @@
                     <td>Finishing Kusen & Pintu <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1142,7 +1162,7 @@
                     <td>Instalasi Listrik <button class="help-btn" data-indicator="listrik">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select listrikSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Jaringan listrik dalam kondisi baik">1. Jaringan listrik dalam kondisi
@@ -1185,7 +1205,7 @@
                     <td>Instalasi Air Bersih <button class="help-btn" data-indicator="air">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select airSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Sistem penyediaan air dalam kondisi baik">1. Sistem penyediaan air dalam
@@ -1225,6 +1245,7 @@
                     <td>Drainase Limbah <button class="help-btn" data-indicator="drainase">?</button></td>
                     <td class="satuan-cell">m1</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1280,10 +1301,11 @@
                     <th rowspan="2">KOMPONEN</th>
                     <th rowspan="2">SATUAN</th>
                     <th rowspan="2">VOLUME SELURUH KOMPONEN</th>
-                    <th colspan="6">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th>
+                    <th colspan="7">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th>
                     <th rowspan="2">KETERANGAN</th>
                 </tr>
                 <tr>
+                    <th class="damage-tr">Tidak Rusak</th>
                     <th class="damage-sr">Sangat Ringan</th>
                     <th class="damage-r">Ringan</th>
                     <th class="damage-s">Sedang</th>
@@ -1299,7 +1321,7 @@
                     <td>Pondasi & Sloof <button class="help-btn" data-indicator="pondasi">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select pondasiSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Pondasi diindikasi dalam kondisi baik">1. Pondasi diindikasi dalam kondisi
@@ -1328,6 +1350,7 @@
                     <td>Kolom <button class="help-btn" data-indicator="kolom">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="10" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1340,6 +1363,7 @@
                     <td>Balok <button class="help-btn" data-indicator="balok">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="10" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1352,6 +1376,7 @@
                     <td>Plat Lantai <button class="help-btn" data-indicator="pelatTangga">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1364,6 +1389,7 @@
                     <td>Tangga <button class="help-btn" data-indicator="pelatTangga">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="2" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1376,6 +1402,7 @@
                     <td>Atap <button class="help-btn" data-indicator="atap">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1390,6 +1417,7 @@
                     <td>Dinding / Partisi <button class="help-btn" data-indicator="dinding">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1402,6 +1430,7 @@
                     <td>Plafond <button class="help-btn" data-indicator="plafon">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1414,6 +1443,7 @@
                     <td>Lantai <button class="help-btn" data-indicator="lantai">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1426,6 +1456,7 @@
                     <td>Kusen <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1438,6 +1469,7 @@
                     <td>Pintu <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1450,6 +1482,7 @@
                     <td>Jendela <button class="help-btn" data-indicator="kusen">?</button></td>
                     <td class="satuan-cell">unit</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1462,6 +1495,7 @@
                     <td>Finishing Plafond <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1474,6 +1508,7 @@
                     <td>Finishing Dinding <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1486,6 +1521,7 @@
                     <td>Finishing Kusen & Pintu <button class="help-btn" data-indicator="finishing">?</button></td>
                     <td class="satuan-cell">%</td>
                     <td class="volume-cell"><input step="1" type="number" value="100" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -1500,7 +1536,7 @@
                     <td>Instalasi Listrik <button class="help-btn" data-indicator="listrik">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select listrikSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Jaringan listrik dalam kondisi baik">1. Jaringan listrik dalam kondisi
@@ -1543,7 +1579,7 @@
                     <td>Instalasi Air Bersih <button class="help-btn" data-indicator="air">?</button></td>
                     <td class="satuan-cell">Estimasi</td>
                     <td class="volume-cell">-</td>
-                    <td colspan="7">
+                    <td colspan="8">
                         <select class="interactive-select airSelect" title="--- Pilih Kondisi ---">
                             <option value="" disabled selected>--- Pilih Kondisi ---</option>
                             <option value="1. Sistem penyediaan air dalam kondisi baik">1. Sistem penyediaan air dalam
@@ -1583,6 +1619,7 @@
                     <td>Drainase Limbah <button class="help-btn" data-indicator="drainase">?</button></td>
                     <td class="satuan-cell">m1</td>
                     <td class="volume-cell"><input step="1" type="number" value="1" /></td>
+                    <td class="damage-cell damage-tr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-sr"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-r"><input placeholder="0" step="1" type="number" /></td>
                     <td class="damage-cell damage-s"><input placeholder="0" step="1" type="number" /></td>
@@ -2042,13 +2079,13 @@
                 const center = { vertical: 'middle', horizontal: 'center', wrapText: true };
                 const left = { vertical: 'middle', horizontal: 'left', wrapText: true };
 
-                ws.columns = [{ width: 5 }, { width: 12 }, { width: 28 }, { width: 10 }, { width: 16 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 18 }, { width: 20 }];
+                ws.columns = [{ width: 5 }, { width: 12 }, { width: 28 }, { width: 10 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 18 }, { width: 20 }];
                 let r = 1;
 
                 const formTitle = activeFormElement.querySelector('h1.form-title').innerText;
-                ws.mergeCells(r, 1, r, 12); ws.getCell(r, 1).value = formTitle;
+                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = formTitle;
                 ws.getCell(r, 1).font = { name: 'Arial', size: 14, bold: true }; ws.getCell(r, 1).alignment = center; r++;
-                ws.mergeCells(r, 1, r, 12); ws.getCell(r, 1).value = "Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis";
+                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = "Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis";
                 ws.getCell(r, 1).font = { name: 'Arial', size: 12, bold: true }; ws.getCell(r, 1).alignment = center; r++; r++;
 
                 const headerBoxFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAA7' } };
@@ -2069,8 +2106,8 @@
                     }
 
                     if (rightItem) {
-                        ws.getCell(r, 7).value = rightItem.querySelector('label')?.innerText || '';
-                        ws.mergeCells(r, 8, r, 12);
+                        ws.getCell(r, 8).value = rightItem.querySelector('label')?.innerText || '';
+                        ws.mergeCells(r, 8, r, 13);
                         let rightValue = rightItem.querySelector('input, select')?.value || '';
                         const rightUnit = rightItem.querySelector('.unit');
                         if (rightUnit && rightValue) {
@@ -2079,19 +2116,19 @@
                         ws.getCell(r, 8).value = rightValue.trim();
                     }
 
-                    for (let c = 1; c <= 12; c++) { const cell = ws.getCell(r, c); cell.fill = headerBoxFill; cell.border = allBorder; cell.font = { name: 'Arial', size: 10 }; if (c === 1 || c === 7) cell.font.bold = true; }
+                    for (let c = 1; c <= 13; c++) { const cell = ws.getCell(r, c); cell.fill = headerBoxFill; cell.border = allBorder; cell.font = { name: 'Arial', size: 10 }; if (c === 1 || c === 8) cell.font.bold = true; }
                     r++;
                 }
                 r++;
 
                 const headerFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E0E0E0' } };
-                const bandFills = { sr: 'E8F5E9', r: 'E3F2FD', s: 'FFFDE7', b: 'FFF3E0', sb: 'FCE4EC', na: 'F5F5F5' };
-                const head1 = ["NO", "SISTEM", "KOMPONEN", "SATUAN", "VOLUME SELURUH KOMPONEN", "TAHAP 2 - HITUNG VOLUME KERUSAKAN", null, null, null, null, null, "KETERANGAN"];
+                const bandFills = { tr: 'D4EDDA', sr: 'E8F5E9', r: 'E3F2FD', s: 'FFFDE7', b: 'FFF3E0', sb: 'FCE4EC', na: 'F5F5F5' };
+                const head1 = ["NO", "SISTEM", "KOMPONEN", "SATUAN", "VOLUME SELURUH KOMPONEN", "TAHAP 2 - HITUNG VOLUME KERUSAKAN", null, null, null, null, null, null, "KETERANGAN"];
                 ws.getRow(r).values = head1; ws.getRow(r).height = 24;
                 ws.getRow(r).eachCell(cell => { cell.font = { name: 'Arial', size: 9, bold: true }; cell.alignment = center; cell.border = allBorder; cell.fill = headerFill; });
-                ws.mergeCells(r, 6, r, 11);[1, 2, 3, 4, 5, 12].forEach(c => ws.mergeCells(r, c, r + 1, c)); r++;
-                const subHeads = ["Sangat Ringan", "Ringan", "Sedang", "Berat", "Sangat Berat", "Komponen Tdk Sesuai/Ada"];
-                const bandKeys = ['sr', 'r', 's', 'b', 'sb', 'na'];
+                ws.mergeCells(r, 6, r, 13);[1, 2, 3, 4, 5, 13].forEach(c => ws.mergeCells(r, c, r + 1, c)); r++;
+                const subHeads = ["Tidak Rusak", "Sangat Ringan", "Ringan", "Sedang", "Berat", "Sangat Berat", "Komponen Tdk Sesuai/Ada"];
+                const bandKeys = ['tr', 'sr', 'r', 's', 'b', 'sb', 'na'];
                 subHeads.forEach((val, i) => { const cell = ws.getCell(r, 6 + i); cell.value = val; cell.font = { name: 'Arial', size: 9, bold: true }; cell.alignment = center; cell.border = allBorder; cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bandFills[bandKeys[i]] } }; });
                 r++;
 
@@ -2104,25 +2141,25 @@
                     ws.getCell(r, 5).value = (volVal === '' || volVal === '-') ? null : Number(volVal);
                     const specialInput = tr.querySelector('td[colspan="7"] select');
                     if (specialInput) {
-                        ws.mergeCells(r, 6, r, 12);
+                        ws.mergeCells(r, 6, r, 13);
                         const selectedText = specialInput.options[specialInput.selectedIndex]?.text || '';
                         ws.getCell(r, 6).value = selectedText.startsWith('---') ? '(Belum dipilih)' : selectedText;
                     } else {
                         tr.querySelectorAll('.damage-cell').forEach((td, j) => { const v = td.querySelector('input')?.value; ws.getCell(r, 6 + j).value = v === '' ? null : Number(v); ws.getCell(r, 6 + j).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bandFills[bandKeys[j]] } }; });
-                        const ket = tr.querySelector('.keterangan-text')?.innerText || ''; const kc = ws.getCell(r, 12); kc.value = ket;
+                        const ket = tr.querySelector('.keterangan-text')?.innerText || ''; const kc = ws.getCell(r, 13); kc.value = ket;
                         if (/OK/i.test(ket)) kc.font = { color: { argb: 'FF008000' }, bold: true }; else if (/Kurang/i.test(ket)) kc.font = { color: { argb: 'FFFFA500' }, bold: true }; else if (/Lebih/i.test(ket)) kc.font = { color: { argb: 'FFFF0000' }, bold: true };
                     }
-                    ws.getRow(r).eachCell({ includeEmpty: true }, (cell, col) => { cell.border = allBorder; if ([1, 2, 4, 5, 12].includes(col) || (col >= 6 && !specialInput)) cell.alignment = center; if (col === 3 || (col === 6 && specialInput)) cell.alignment = left; });
+                    ws.getRow(r).eachCell({ includeEmpty: true }, (cell, col) => { cell.border = allBorder; if ([1, 2, 4, 5, 13].includes(col) || (col >= 6 && !specialInput)) cell.alignment = center; if (col === 3 || (col === 6 && specialInput)) cell.alignment = left; });
                     r++;
                 });
                 r += 2;
                 const sketchTop = r;
                 ws.mergeCells(r, 1, r, 8); ws.getCell(r, 1).value = "SKETSA DENAH BANGUNAN";
-                ws.mergeCells(r, 9, r, 12); ws.getCell(r, 9).value = "Tingkat Kerusakan";
+                ws.mergeCells(r, 9, r, 13); ws.getCell(r, 9).value = "Tingkat Kerusakan";
                 ws.getRow(r).eachCell(c => { c.font = { bold: true, size: 11 }; c.alignment = center; c.border = allBorder; }); r++;
                 ws.mergeCells(r, 1, r + 9, 8);
                 ["Ringan: < 30%", "Sedang: > 30% - 45%", "Berat: > 45%"].forEach((text, i) => { ws.mergeCells(r + 1 + i, 9, r + 1 + i, 12); ws.getCell(r + 1 + i, 9).value = text; ws.getCell(r + 1 + i, 9).alignment = { ...left, vertical: 'top' }; });
-                for (let rr = r; rr <= r + 9; rr++) { for (let cc = 1; cc <= 12; cc++) { if (!ws.getCell(rr, cc).border) ws.getCell(rr, cc).border = allBorder; } }
+                for (let rr = r; rr <= r + 9; rr++) { for (let cc = 1; cc <= 13; cc++) { if (!ws.getCell(rr, cc).border) ws.getCell(rr, cc).border = allBorder; } }
                 r += 11;
                 const sigTop = r;
                 const sigBlocks = [{ title: "TIM SURVEI", agency: "Petugas Survei", nameCls: "surveyName", nipCls: "surveyNip", col: 1, pad: formPads.survey }, { title: "MENGETAHUI", agency: activeFormElement.querySelector('.eduAgency')?.value || '', nameCls: "eduName", nipCls: "eduNip", col: 5, pad: formPads.edu }, { title: "MENYETUJUI", agency: activeFormElement.querySelector('.puAgency')?.value || '', nameCls: "puName", nipCls: "puNip", col: 9, pad: formPads.pu }];
@@ -2136,7 +2173,7 @@
                     ws.getCell(r + 7, sb.col).alignment = ws.getCell(r + 6, sb.col).alignment = center;
                 });
                 r += 9;
-                ws.mergeCells(r, 1, r, 12); ws.getCell(r, 1).value = "Note: Dinas PU/Dinas yang menangani Bangunan Gedung";
+                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = "Note: Dinas PU/Dinas yang menangani Bangunan Gedung";
                 ws.getCell(r, 1).font = { italic: true, size: 9, color: { argb: 'FF555555' } }; ws.getCell(r, 1).alignment = left;
 
                 const canvasRanges = [{ pad: formPads.sketch, range: { tl: { col: 1.05, row: sketchTop - 0.95 }, ext: { width: 540, height: 180 } } }, { pad: formPads.survey, range: { tl: { col: 1.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }, { pad: formPads.edu, range: { tl: { col: 5.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }, { pad: formPads.pu, range: { tl: { col: 9.05, row: sigTop + 1.05 }, ext: { width: 280, height: 70 } } }];
@@ -2218,7 +2255,7 @@
                 const tableRows = [];
                 activeFormElement.querySelectorAll('.main-data-tbody tr').forEach(row => {
                     const cells = [];
-                    const isMergedRow = row.querySelector('td[colspan="7"]');
+                    const isMergedRow = row.querySelector('td[colspan="8"]');
 
                     Array.from(row.cells).forEach(cell => {
                         let cellData = {
@@ -2341,8 +2378,9 @@
                     </td></tr></tbody></table>
                 </div>
                 <table><thead>
-                <tr><th rowspan="2">NO</th><th rowspan="2">SISTEM</th><th rowspan="2">KOMPONEN</th><th rowspan="2">SATUAN</th><th rowspan="2">VOLUME SELURUH KOMPONEN</th><th colspan="6">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th><th rowspan="2">KETERANGAN</th></tr>
-                <tr><th>Sangat Ringan</th><th>Ringan</th><th>Sedang</th><th>Berat</th><th>Sangat Berat</th><th>Komponen Tdk Sesuai/Ada</th></tr>
+                <tr><th rowspan="2">NO</th><th rowspan="2">SISTEM</th><th rowspan="2">KOMPONEN</th><th rowspan="2">SATUAN</th><th rowspan="2">VOLUME SELURUH KOMPONEN</th><th colspan="7">TAHAP 2 - HITUNG VOLUME KERUSAKAN</th>
+                    <th rowspan="2">KETERANGAN</th></tr>
+                <tr><th>Tidak Rusak</th><th>Sangat Ringan</th><th>Ringan</th><th>Sedang</th><th>Berat</th><th>Sangat Berat</th><th>Komponen Tdk Sesuai/Ada</th></tr>
                 </thead><tbody>${tableRows.map(row => `<tr>${row.map(cell => `<td class="text-left" ${cell.rowSpan > 1 ? `rowspan="${cell.rowSpan}"` : ''} ${cell.colSpan > 1 ? `colspan="${cell.colSpan}"` : ''}>${cell.text}</td>`).join('')}</tr>`).join('')}</tbody></table>
                 <br page-break-before="always">
                 <table class="no-border"><tr>
