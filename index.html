@@ -2395,10 +2395,13 @@
         document.getElementById('btn-add-new-survey').addEventListener('click', () => {
             currentEditingSurveyId = null;
             const formElement = document.getElementById(activeFormCategory);
+
+            // First aggressively clear all inputs in the DOM for this form
+            clearFormState(formElement);
+
             if (!formPads || !formPads.sketch) {
                 initializeForm(formElement);
             }
-            clearFormState(formElement); // Clear state so previous edits don't bleed over
             showForm(activeFormCategory);
         });
 
@@ -2640,23 +2643,31 @@
             if (!formElement) return;
             formElement.querySelectorAll('input, select, textarea').forEach(el => {
                 if (el.type === 'button' || el.readOnly) return;
+
                 if (el.tagName === 'SELECT') {
                     el.selectedIndex = 0;
-                    const evt = new Event('change');
-                    el.dispatchEvent(evt);
-                }
-                else if (el.classList.contains('eduAgency')) el.value = 'Dinas Pendidikan Kab/Kota/Provinsi';
-                else if (el.classList.contains('puAgency')) el.value = 'Dinas PU Kab/Kota/Provinsi';
-                else if (el.classList.contains('jumlahLantai')) return;
-                else if (el.type === 'file') el.value = '';
-                else {
+                    el.dispatchEvent(new Event('change'));
+                } else if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else if (el.classList.contains('eduAgency')) {
+                    el.value = 'Dinas Pendidikan Kab/Kota/Provinsi';
+                } else if (el.classList.contains('puAgency')) {
+                    el.value = 'Dinas PU Kab/Kota/Provinsi';
+                } else if (el.classList.contains('jumlahLantai')) {
+                    return; // Skip reading/resetting locked value
+                } else if (el.type === 'file') {
+                    el.value = '';
+                } else {
                     // For volume cells that have default HTML values (e.g. 10), restore them
                     if (el.hasAttribute('value') && el.type === 'number' && el.closest('.volume-cell')) {
                         el.value = el.getAttribute('value');
                     } else {
-                        el.value = '';
+                        el.value = ''; // FORCE CLEAR everything else (text, date, etc)
                     }
                 }
+
+                // Dispatch input event to notify any listeners (like auto-calculators)
+                el.dispatchEvent(new Event('input'));
             });
             formElement.querySelectorAll('.keterangan-text').forEach(span => { span.innerText = ''; });
             formElement.querySelectorAll('.print-only-text').forEach(span => { span.innerText = '(Belum dipilih)'; });
