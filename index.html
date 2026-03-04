@@ -2083,9 +2083,9 @@
                 let r = 1;
 
                 const formTitle = activeFormElement.querySelector('h1.form-title').innerText;
-                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = formTitle;
+                ws.mergeCells(r, 1, r, 14); ws.getCell(r, 1).value = formTitle;
                 ws.getCell(r, 1).font = { name: 'Arial', size: 14, bold: true }; ws.getCell(r, 1).alignment = center; r++;
-                ws.mergeCells(r, 1, r, 13); ws.getCell(r, 1).value = "Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis";
+                ws.mergeCells(r, 1, r, 14); ws.getCell(r, 1).value = "Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis";
                 ws.getCell(r, 1).font = { name: 'Arial', size: 12, bold: true }; ws.getCell(r, 1).alignment = center; r++; r++;
 
                 const headerBoxFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEAA7' } };
@@ -2096,7 +2096,7 @@
 
                     if (leftItem) {
                         ws.getCell(r, 1).value = leftItem.querySelector('label')?.innerText || '';
-                        ws.mergeCells(r, 2, r, 6);
+                        ws.mergeCells(r, 2, r, 7);
                         let leftValue = leftItem.querySelector('input, select')?.value || '';
                         const leftUnit = leftItem.querySelector('.unit');
                         if (leftUnit && leftValue) {
@@ -2107,16 +2107,16 @@
 
                     if (rightItem) {
                         ws.getCell(r, 8).value = rightItem.querySelector('label')?.innerText || '';
-                        ws.mergeCells(r, 8, r, 13);
+                        ws.mergeCells(r, 9, r, 14);
                         let rightValue = rightItem.querySelector('input, select')?.value || '';
                         const rightUnit = rightItem.querySelector('.unit');
                         if (rightUnit && rightValue) {
                             rightValue += ' ' + rightUnit.innerText;
                         }
-                        ws.getCell(r, 8).value = rightValue.trim();
+                        ws.getCell(r, 9).value = rightValue.trim();
                     }
 
-                    for (let c = 1; c <= 13; c++) { const cell = ws.getCell(r, c); cell.fill = headerBoxFill; cell.border = allBorder; cell.font = { name: 'Arial', size: 10 }; if (c === 1 || c === 8) cell.font.bold = true; }
+                    for (let c = 1; c <= 14; c++) { const cell = ws.getCell(r, c); cell.fill = headerBoxFill; cell.border = allBorder; cell.font = { name: 'Arial', size: 10 }; if (c === 1 || c === 8) cell.font.bold = true; }
                     r++;
                 }
                 r++;
