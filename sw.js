@@ -1,4 +1,4 @@
-const CACHE_NAME = 'penilaian-bangunan-v5';
+const CACHE_NAME = 'penilaian-bangunan-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -20,11 +20,17 @@ self.addEventListener('install', (event) => {
         console.log('[SW] Caching app shell and assets');
         return cache.addAll(ASSETS_TO_CACHE);
       })
-      .then(() => self.skipWaiting())
       .catch((err) => {
         console.error('[SW] Cache install failed:', err);
       })
   );
+});
+
+// Listen for messages from the client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Activate event - clean up old caches
