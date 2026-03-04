@@ -2872,17 +2872,31 @@
                     }
                 }
 
+                const namaSekolah = activeFormElement.querySelector('.namaSekolah')?.value || 'Sekolah';
                 const namaBangunan = activeFormElement.querySelector('.namaBangunan')?.value || 'Bangunan';
-                let filename = `Penilaian_Kerusakan_${namaBangunan}`;
+                let waktuSurvei = activeFormElement.querySelector('.waktuSurvey')?.value || '';
+
+                if (waktuSurvei) {
+                    const dateObj = new Date(waktuSurvei);
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const year = dateObj.getFullYear();
+                    waktuSurvei = `${day}_${month}_${year}`;
+                } else {
+                    waktuSurvei = 'TglKosong';
+                }
+
+                let baseFilename = `FormRusak_${namaSekolah}_${namaBangunan}_${waktuSurvei}`;
+                baseFilename = baseFilename.replace(/[<>:"/\\|?*]/g, '_'); // Sanitize filename
 
                 // Prompt user for filename
-                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", filename);
+                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", baseFilename);
                 if (customFilename === null) {
                     return; // User cancelled
                 }
 
                 // Use input or default if empty, then append extension
-                filename = (customFilename.trim() || filename) + '.xlsx';
+                let filename = (customFilename.trim() || baseFilename) + '.xlsx';
 
                 const buffer = await wb.xlsx.writeBuffer();
                 saveAs(new Blob([buffer]), filename);
@@ -3063,17 +3077,31 @@
                 </div></body></html>
             `;
                 const blob = new Blob([htmlString], { type: 'application/msword' });
+                const namaSekolah = activeFormElement.querySelector('.namaSekolah')?.value || 'Sekolah';
                 const namaBangunan = activeFormElement.querySelector('.namaBangunan')?.value || 'Bangunan';
-                let filename = `Penilaian_Kerusakan_${namaBangunan}`;
+                let waktuSurvei = activeFormElement.querySelector('.waktuSurvey')?.value || '';
+
+                if (waktuSurvei) {
+                    const dateObj = new Date(waktuSurvei);
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const year = dateObj.getFullYear();
+                    waktuSurvei = `${day}_${month}_${year}`;
+                } else {
+                    waktuSurvei = 'TglKosong';
+                }
+
+                let baseFilename = `FormRusak_${namaSekolah}_${namaBangunan}_${waktuSurvei}`;
+                baseFilename = baseFilename.replace(/[<>:"/\\|?*]/g, '_'); // Sanitize filename
 
                 // Prompt user for filename
-                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", filename);
+                const customFilename = prompt("Masukkan nama file untuk disimpan (tanpa ekstensi):", baseFilename);
                 if (customFilename === null) {
                     return; // User cancelled
                 }
 
                 // Use input or default if empty, then append extension
-                filename = (customFilename.trim() || filename) + '.doc';
+                let filename = (customFilename.trim() || baseFilename) + '.doc';
 
                 saveAs(blob, filename);
             } catch (err) { console.error(err); alert('Gagal mengekspor Word: ' + err.message); }
