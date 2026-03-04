@@ -189,6 +189,130 @@
             line-height: 1.6;
         }
 
+        /* --- Survey List Page Styles --- */
+        #survey-list-page {
+            display: none;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .survey-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .survey-list-header h2 {
+            font-size: 1.5em;
+            color: var(--landing-header-text);
+        }
+
+        .btn-add-survey {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-add-survey:hover {
+            background-color: #0056b3;
+        }
+
+        #survey-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .survey-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .survey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .survey-card-header {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .survey-card-details p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .survey-card-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .btn-edit-survey,
+        .btn-delete-survey {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+            color: white;
+        }
+
+        .btn-edit-survey {
+            background-color: #28a745;
+        }
+
+        .btn-delete-survey {
+            background-color: #dc3545;
+        }
+
+        .btn-edit-survey:hover,
+        .btn-delete-survey:hover {
+            opacity: 0.8;
+        }
+
+        .no-surveys-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px dashed #ccc;
+        }
 
         /* --- Form Container Styles --- */
         .form-container {
@@ -907,6 +1031,19 @@
                     <a href="#" class="card-overlay-link" data-form-id="form-2-lantai"></a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Halaman List Survei (baru) -->
+    <div id="survey-list-page">
+        <div class="survey-list-header">
+            <h2 id="survey-list-title">Daftar Survei</h2>
+            <button class="btn-add-survey" id="btn-add-new-survey">
+                <i class="fas fa-plus"></i> Tambah Survei Baru
+            </button>
+        </div>
+        <div id="survey-cards-container">
+            <!-- Cards will be inserted here dynamically -->
         </div>
     </div>
 
@@ -1648,6 +1785,275 @@
         let activeFormElement = null;
         let formPads = {}; // Will hold { sketchPad: pad, surveyCanvas: pad, ... } for the active form
 
+        // --- INDEXEDDB SETUP (Offline Storage) ---
+        const DB_NAME = 'FormRusakDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'surveys';
+        let db;
+
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = (event) => reject("Database error: " + event.target.error);
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('formId', 'formId', { unique: false });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                };
+            });
+        };
+
+        // Initialize DB on page load
+        initDB().catch(console.error);
+
+        // --- CRUD HELPER FUNCTIONS ---
+        const saveSurveyToDB = (surveyData) => {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.put(surveyData);
+                request.onsuccess = () => resolve(request.result); // Returns ID
+                request.onerror = () => reject(request.error);
+            });
+        };
+
+        const getAllSurveys = (formIdFilter = null) => {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    let surveys = request.result;
+                    // Filter by form type (1 lantai / 2 lantai)
+                    if (formIdFilter) {
+                        surveys = surveys.filter(s => s.formId === formIdFilter);
+                    }
+                    // Sort descending by timestamp
+                    surveys.sort((a, b) => b.timestamp - a.timestamp);
+                    resolve(surveys);
+                };
+                request.onerror = () => reject(request.error);
+            });
+        };
+
+        const getSurveyById = (id) => {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        };
+
+        const deleteSurvey = (id) => {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        };
+
+        // Store ID of currently editing survey, null if creating new
+        let currentEditingSurveyId = null;
+
+        // --- CORE LOGIC EXTRACTION ---
+        // Will extract form data into an object
+        function extractFormData(formElement) {
+            const data = {
+                formId: activeFormId,
+                timestamp: Date.now(),
+                headerInfo: {},
+                tables: [],
+                indicatorInputs: {},
+                photos: [], // Array of base64 images
+                signatures: {},
+                sketch: null
+            };
+
+            // 1. Header Info
+            formElement.querySelectorAll('.header-info .info-grid input, .header-info .info-grid select').forEach(el => {
+                // Use input's class as key if it exists, otherwise its placeholder/type maybe not ideal, let's use class
+                const classes = Array.from(el.classList).filter(c => c !== 'interactive-select');
+                if (classes.length > 0) {
+                    data.headerInfo[classes[0]] = el.value;
+                }
+            });
+
+            // 2. Select Indicators, Checkboxes, and Damage Cell Inputs
+            formElement.querySelectorAll('select.interactive-select').forEach(select => {
+                // use classname as key (e.g. pondasiSelect)
+                const classes = Array.from(select.classList).filter(c => c !== 'interactive-select');
+                if (classes.length > 0) {
+                    data.indicatorInputs[classes[0]] = select.value;
+                }
+            });
+
+            formElement.querySelectorAll('.main-data-tbody tr').forEach((tr, index) => {
+                const rowInputs = {};
+                rowInputs.volume = tr.querySelector('.volume-cell input')?.value || '';
+
+                const damageInputs = [];
+                tr.querySelectorAll('.damage-cell input').forEach(inp => damageInputs.push(inp.value));
+                rowInputs.damages = damageInputs;
+
+                data.tables.push(rowInputs);
+            });
+
+            // 3. Signature & Sketch Pads
+            if (formPads.sketch && !formPads.sketch.isEmpty()) {
+                data.sketch = formPads.sketch.toDataURL('image/png');
+                data.sketch_data = formPads.sketch.toData(); // Store vector data for editability
+            }
+            ['survey', 'edu', 'pu'].forEach(type => {
+                if (formPads[type] && !formPads[type].isEmpty()) {
+                    data.signatures[type] = {
+                        img: formPads[type].toDataURL('image/png'),
+                        data: formPads[type].toData() // vector data
+                    };
+                }
+
+                const classes = [`${type}Name`, `${type}Nip`, `${type}Agency`];
+                classes.forEach(cls => {
+                    const inputEl = formElement.querySelector(`.${cls}`);
+                    if (inputEl) {
+                        data.headerInfo[cls] = inputEl.value; // Reuse headerInfo for other text info
+                    }
+                });
+            });
+
+            // 4. Photos
+            const groups = formElement.querySelectorAll('.attachment-group');
+            groups.forEach(group => {
+                const title = group.querySelector('h3').innerText;
+                const images = group.querySelectorAll('.thumbnail-wrapper img');
+                images.forEach(img => {
+                    data.photos.push({
+                        title: title,
+                        base64: img.dataset.base64
+                    });
+                });
+            });
+
+            return data;
+        }
+
+        // Will populate form data from saved object
+        function populateFormData(formElement, data) {
+            // Wait brief moment for canvas scaling
+            setTimeout(() => {
+                // 1. Header Info
+                for (const [key, value] of Object.entries(data.headerInfo || {})) {
+                    const el = formElement.querySelector(`.${key}`);
+                    if (el) el.value = value;
+                }
+
+                // 2. Indicators & Tables
+                for (const [key, value] of Object.entries(data.indicatorInputs || {})) {
+                    const select = formElement.querySelector(`.${key}.interactive-select`);
+                    if (select) {
+                        select.value = value;
+                        const evt = new Event('change');
+                        select.dispatchEvent(evt); // trigger print text update
+                    }
+                }
+
+                formElement.querySelectorAll('.main-data-tbody tr').forEach((tr, index) => {
+                    if (data.tables && data.tables[index]) {
+                        const rowData = data.tables[index];
+                        const volInput = tr.querySelector('.volume-cell input');
+                        if (volInput && rowData.volume !== undefined) volInput.value = rowData.volume;
+
+                        const dmgInputs = tr.querySelectorAll('.damage-cell input');
+                        if (rowData.damages) {
+                            dmgInputs.forEach((inp, i) => {
+                                if (rowData.damages[i] !== undefined) inp.value = rowData.damages[i];
+                            });
+                        }
+                        updateKeterangan(tr);
+                    }
+                });
+
+                // 3. Canvases
+                if (data.sketch_data && formPads.sketch) {
+                    formPads.sketch.fromData(data.sketch_data);
+                }
+                ['survey', 'edu', 'pu'].forEach(type => {
+                    if (data.signatures && data.signatures[type] && data.signatures[type].data && formPads[type]) {
+                        formPads[type].fromData(data.signatures[type].data);
+                    }
+                });
+
+                // 4. Photos
+                if (data.photos && data.photos.length > 0) {
+                    // Need to put images into correct groups based on title
+                    formElement.querySelectorAll('.attachment-group').forEach(group => {
+                        const title = group.querySelector('h3').innerText;
+                        const thumbnailContainer = group.querySelector('.thumbnail-container');
+                        thumbnailContainer.innerHTML = ''; // clear existing
+
+                        const groupPhotos = data.photos.filter(p => p.title === title);
+                        groupPhotos.forEach(photo => {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'thumbnail-wrapper';
+
+                            const img = document.createElement('img');
+                            img.src = photo.base64;
+                            img.dataset.base64 = photo.base64;
+
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'delete-thumb-btn';
+                            deleteBtn.innerHTML = '×';
+                            deleteBtn.title = 'Hapus foto ini';
+                            deleteBtn.onclick = () => { wrapper.remove(); };
+
+                            wrapper.appendChild(img);
+                            wrapper.appendChild(deleteBtn);
+                            thumbnailContainer.appendChild(wrapper);
+                        });
+                    });
+                }
+            }, 300); // 300ms delay to ensure layout is complete before writing to canvas
+        }
+
+        async function handleSaveDraft() {
+            if (!activeFormElement) return;
+            const btn = activeFormElement.querySelector('.save-draft-btn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                const surveyData = extractFormData(activeFormElement);
+                if (currentEditingSurveyId) {
+                    surveyData.id = currentEditingSurveyId; // update existing
+                }
+
+                await saveSurveyToDB(surveyData);
+
+                // Show list page again
+                alert('Draft survei berhasil disimpan ke Database Lokal.');
+                showSurveyList(activeFormId);
+            } catch (error) {
+                console.error('Error saving survey:', error);
+                alert('Gagal menyimpan draft: ' + error.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+
         // --- DAMAGE INDICATOR DATA ---
         const indicators_1L = {
             pondasi: { title: "Indikator Kerusakan Pondasi & Sloof", data: [["Tidak Rusak", "Pondasi diindikasikan dalam kondisi baik"], ["Rusak Sangat Ringan", "Terjadi penurunan yang merata pada seluruh struktur bangunan"], ["Rusak Ringan", "Terjadi penurunan tidak merata, namun perbedaan penurunan tidak melebihi 1/250 L"], ["Rusak Sedang", "Penurunan melebihi 1/250 L yang mengakibatkan kerusakan pada struktur di atasnya. Tanah di sekeliling bangunan mengalami kenaikan"], ["Rusak Berat", "Bangunan terlihat miring secara kasat mata. Lantai dasar mengalami kenaikan atau menggelembung"], ["Rusak Sangat Berat", "Pondasi mengalami patah atau bergeser akibat longsor, yang menyebabkan kerusakan pada struktur atas"], ["Komponen Tidak Sesuai", "Material, dimensi, dan konstruksi pondasi diindikasi tidak memenuhi persyaratan teknis"]] },
@@ -1723,6 +2129,7 @@
             <p class="footer-note">Note: Dinas PU/Dinas yang menangani Bangunan Gedung</p>
         </div>
         <div class="btn-container">
+            <button class="save-draft-btn" style="background-color: #ffc107; color: #000;">Simpan Draft & Kembali</button>
             <button class="reset-btn">Reset Form</button>
             <button class="excel-btn">Download Excel</button>
             <button class="word-btn">Download Word</button>
@@ -1736,24 +2143,260 @@
         });
 
         // --- FORM SELECTION & INITIALIZATION ---
-        function showForm(formId) {
-            activeFormId = formId;
-            activeFormElement = document.getElementById(activeFormId);
+        // Modify showForm to handle list UI transition
+        let activeFormCategory = null;
+
+        async function renderSurveyList(formId) {
+            const container = document.getElementById('survey-cards-container');
+            container.innerHTML = '<p class="no-surveys-msg">Memuat data survei...</p>';
+
+            try {
+                const surveys = await getAllSurveys(formId);
+
+                if (surveys.length === 0) {
+                    container.innerHTML = `<div class="no-surveys-msg">
+                        <i class="fas fa-folder-open" style="font-size: 2em; margin-bottom: 10px; color: #ccc; display: block;"></i>
+                        Belum ada survei tersimpan untuk kategori ini.<br>Klik "Tambah Survei Baru" untuk memulai.
+                    </div>`;
+                    return;
+                }
+
+                container.innerHTML = ''; // clear
+
+                surveys.forEach(survey => {
+                    const card = document.createElement('div');
+                    card.className = 'survey-card';
+
+                    const namaSekolah = survey.headerInfo?.namaSekolah || '(Tanpa Nama Sekolah)';
+                    const dateObj = new Date(survey.timestamp);
+                    const dateStr = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    card.innerHTML = `
+                        <div class="survey-card-header">
+                            ${namaSekolah}
+                            <i class="fas ${formId === 'form-1-lantai' ? 'fa-house-damage' : 'fa-building'}" style="color:var(--text-light)"></i>
+                        </div>
+                        <div class="survey-card-details">
+                            <p><i class="far fa-clock"></i> Tersimpan: ${dateStr}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${survey.headerInfo?.kabupaten || '-'}, ${survey.headerInfo?.provinsi || '-'}</p>
+                        </div>
+                        <div class="survey-card-actions" style="flex-wrap: wrap;">
+                            <button class="btn-edit-survey" data-id="${survey.id}"><i class="fas fa-edit"></i> Edit / Lanjut</button>
+                            <button class="btn-delete-survey" data-id="${survey.id}"><i class="fas fa-trash"></i> Hapus</button>
+                            <button class="btn-excel-survey" data-id="${survey.id}" style="background-color: #1a73e8; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity 0.2s;"><i class="fas fa-file-excel"></i> Excel</button>
+                            <button class="btn-word-survey" data-id="${survey.id}" style="background-color: #2b579a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity 0.2s;"><i class="fas fa-file-word"></i> Word</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Attach events
+                container.querySelectorAll('.btn-edit-survey').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = Number(e.currentTarget.dataset.id);
+                        await openSurveyForEdit(id, formId);
+                    });
+                });
+
+                container.querySelectorAll('.btn-delete-survey').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = Number(e.currentTarget.dataset.id);
+                        if (confirm('Apakah Anda yakin ingin menghapus draft survei ini secara permanen?')) {
+                            await deleteSurvey(id);
+                            await renderSurveyList(formId); // re-render
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.btn-excel-survey').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = Number(e.currentTarget.dataset.id);
+                        await downloadSurveyFromList(id, formId, 'excel', e.currentTarget);
+                    });
+                });
+
+                container.querySelectorAll('.btn-word-survey').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = Number(e.currentTarget.dataset.id);
+                        await downloadSurveyFromList(id, formId, 'word', e.currentTarget);
+                    });
+                });
+
+            } catch (err) {
+                console.error("Failed to load surveys:", err);
+                container.innerHTML = '<p class="no-surveys-msg" style="color:red;">Gagal memuat DB. Periksa consol browser.</p>';
+            }
+        }
+
+        async function downloadSurveyFromList(id, formId, type, btnElement) {
+            const originalHtml = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Proses...';
+            btnElement.disabled = true;
+
+            try {
+                const surveyData = await getSurveyById(id);
+                if (surveyData) {
+                    activeFormId = formId;
+                    activeFormElement = document.getElementById(activeFormId);
+
+                    // Move the form to background but make it display block so width calculations work
+                    activeFormElement.style.display = 'block';
+                    activeFormElement.style.opacity = '0';
+                    activeFormElement.style.pointerEvents = 'none';
+                    activeFormElement.style.position = 'absolute';
+                    activeFormElement.style.left = '0';
+                    activeFormElement.style.top = '0';
+                    activeFormElement.style.width = '100%';
+                    activeFormElement.style.zIndex = '-9999';
+
+                    if (!formPads || !formPads.sketch) {
+                        initializeForm(activeFormElement);
+                    }
+
+                    // Trigger a resize to ensure canvas gets right dimension
+                    const resizeEvent = new Event('resize');
+                    window.dispatchEvent(resizeEvent);
+
+                    populateFormData(activeFormElement, surveyData);
+
+                    // Wait for populateFormData timeout + rendering
+                    await new Promise(resolve => setTimeout(resolve, 400));
+
+                    if (type === 'excel') {
+                        await downloadExcel();
+                    } else {
+                        await downloadWord();
+                    }
+
+                    // Silent reset
+                    activeFormElement.querySelectorAll('input, select, textarea').forEach(el => {
+                        if (el.type === 'button' || el.readOnly) return;
+                        if (el.tagName === 'SELECT') { el.selectedIndex = 0; }
+                        else if (el.classList.contains('eduAgency')) el.value = 'Dinas Pendidikan Kab/Kota/Provinsi';
+                        else if (el.classList.contains('puAgency')) el.value = 'Dinas PU Kab/Kota/Provinsi';
+                        else if (el.classList.contains('jumlahLantai')) return;
+                        else if (el.type === 'file') el.value = '';
+                        else el.value = '';
+                    });
+                    activeFormElement.querySelectorAll('.keterangan-text').forEach(span => { span.innerText = ''; });
+                    activeFormElement.querySelectorAll('.thumbnail-container').forEach(div => { div.innerHTML = ''; });
+                    if (formPads) Object.values(formPads).forEach(pad => { if (pad && pad.clear) pad.clear(); });
+
+                    activeFormElement.style.display = 'none';
+                    activeFormElement.style.opacity = '';
+                    activeFormElement.style.pointerEvents = '';
+                    activeFormElement.style.position = '';
+                    activeFormElement.style.left = '';
+                    activeFormElement.style.top = '';
+                    activeFormElement.style.width = '';
+                    activeFormElement.style.zIndex = '';
+
+                    activeFormId = null;
+                    activeFormElement = null;
+                } else {
+                    alert('Data survei tidak ditemukan.');
+                }
+            } catch (e) {
+                console.error('Error downloading:', e);
+                alert('Terjadi kesalahan saat mengekspor data.');
+            } finally {
+                btnElement.innerHTML = originalHtml;
+                btnElement.disabled = false;
+            }
+        }
+
+        function showSurveyList(formId) {
+            activeFormCategory = formId; // Save category context
+            activeFormId = null;
 
             document.getElementById('landing-page').classList.add('hidden');
+            if (activeFormElement) activeFormElement.style.display = 'none';
 
             setTimeout(() => {
                 document.getElementById('landing-page').style.display = 'none';
-                activeFormElement.style.display = 'block';
+
+                // Show List UI
+                const listPage = document.getElementById('survey-list-page');
+                const titleStr = formId === 'form-1-lantai' ? 'Daftar Survei: 1 Lantai' : 'Daftar Survei: 2 Lantai';
+                document.getElementById('survey-list-title').innerText = titleStr;
+
+                listPage.style.display = 'block';
                 document.getElementById('back-to-selection').style.display = 'block';
-                initializeForm(activeFormElement);
+
+                // update back button behavior
+                document.getElementById('back-to-selection').onclick = showLandingPage;
+
+                renderSurveyList(formId);
             }, 500);
         }
+
+        function showForm(formId) {
+            // Hide list
+            document.getElementById('survey-list-page').style.display = 'none';
+
+            activeFormId = formId;
+            activeFormElement = document.getElementById(activeFormId);
+
+            activeFormElement.style.display = 'block';
+            document.getElementById('back-to-selection').style.display = 'block';
+
+            // update back button behavior to return to list, not landing
+            document.getElementById('back-to-selection').onclick = async () => {
+                // Auto-save before returning
+                try {
+                    const btn = document.getElementById('back-to-selection');
+                    const originalStr = btn.innerText;
+                    btn.innerText = '⏳';
+                    btn.disabled = true;
+
+                    const surveyData = extractFormData(activeFormElement);
+                    if (currentEditingSurveyId) {
+                        surveyData.id = currentEditingSurveyId;
+                    }
+                    await saveSurveyToDB(surveyData);
+
+                    btn.innerText = originalStr;
+                    btn.disabled = false;
+                    showSurveyList(activeFormCategory);
+                } catch (e) {
+                    console.error("Auto-save failed", e);
+                    if (confirm("Gagal auto-save. Tetap kembali?")) {
+                        showSurveyList(activeFormCategory);
+                    }
+                    document.getElementById('back-to-selection').disabled = false;
+                    document.getElementById('back-to-selection').innerText = '↩';
+                }
+            };
+
+            initializeForm(activeFormElement);
+        }
+
+        async function openSurveyForEdit(id, formId) {
+            try {
+                const surveyData = await getSurveyById(id);
+                if (surveyData) {
+                    currentEditingSurveyId = id;
+                    showForm(formId);
+                    populateFormData(activeFormElement, surveyData);
+                } else {
+                    alert("Survei tidak ditemukan!");
+                }
+            } catch (e) {
+                console.error(e); alert("Gejal memuat survei.");
+            }
+        }
+
+        // Hook up Add New button in List UI
+        document.getElementById('btn-add-new-survey').addEventListener('click', () => {
+            currentEditingSurveyId = null;
+            showForm(activeFormCategory);
+        });
 
         function showLandingPage() {
             if (activeFormElement) {
                 activeFormElement.style.display = 'none';
             }
+            document.getElementById('survey-list-page').style.display = 'none';
             document.getElementById('back-to-selection').style.display = 'none';
 
             const landingPage = document.getElementById('landing-page');
@@ -1765,6 +2408,7 @@
 
             activeFormId = null;
             activeFormElement = null;
+            activeFormCategory = null;
             formPads = {};
         }
 
@@ -1807,6 +2451,7 @@
             window.addEventListener("resize", debouncedResize);
             debouncedResize();
 
+            formElement.querySelector('.save-draft-btn').onclick = () => handleSaveDraft();
             formElement.querySelector('.reset-btn').onclick = () => resetForm();
             formElement.querySelector('.excel-btn').onclick = () => downloadExcel();
             formElement.querySelector('.word-btn').onclick = () => downloadWord();
@@ -1855,13 +2500,14 @@
             generatePhotoUploads(formElement);
         }
 
-        document.getElementById('back-to-selection').addEventListener('click', showLandingPage);
+        // Remove old direct click listeners for back button, it's now handled dynamically
+        // document.getElementById('back-to-selection').addEventListener('click', showLandingPage);
 
         document.querySelectorAll('.card-overlay-link').forEach(link => {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
                 const formId = this.dataset.formId;
-                showForm(formId);
+                showSurveyList(formId); // Show List UI instead of Form directly
             });
         });
 
@@ -2000,6 +2646,7 @@
                 activeFormElement.querySelectorAll('.thumbnail-container').forEach(div => { div.innerHTML = ''; });
                 Object.values(formPads).forEach(pad => pad.clear());
                 activeFormElement.querySelectorAll('.main-data-tbody tr').forEach(row => updateKeterangan(row));
+                currentEditingSurveyId = null; // Clear ID so a reset form becomes a new draft
             }
         }
 
