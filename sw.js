@@ -1,7 +1,7 @@
 const CACHE_NAME = 'penilaian-bangunan-v1';
 const ASSETS_TO_CACHE = [
   './',
-  './FORMULIR PENILAIAN KERUSAKAN BANGUNAN MADRASAH.html',
+  './index.html',
   './manifest.json',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
@@ -66,7 +66,7 @@ self.addEventListener('fetch', (event) => {
             .catch(() => {
               // Network failed, cached version already returned
             });
-          
+
           return cachedResponse;
         }
 
@@ -84,7 +84,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // If it's a navigation request, show offline fallback
             if (event.request.mode === 'navigate') {
-              return caches.match('./FORMULIR PENILAIAN KERUSAKAN BANGUNAN MADRASAH.html');
+              return caches.match('./index.html');
             }
           });
       })

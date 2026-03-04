@@ -2,7 +2,7 @@
   "name": "Formulir Penilaian Kerusakan Bangunan",
   "short_name": "FormRusak",
   "description": "Formulir penilaian kerusakan bangunan - Kementerian Pekerjaan Umum | Direktorat Jenderal Prasarana Strategis",
-  "start_url": "./FORMULIR PENILAIAN KERUSAKAN BANGUNAN MADRASAH.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#E0F7FA",
